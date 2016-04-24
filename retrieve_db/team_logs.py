@@ -6,9 +6,9 @@ from pymongo import MongoClient
 class TeamLogs:
     seasons = ['2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
 
-    def __init__(self):
-        self.client = MongoClient()
-        self.db = self.client.nba_py
+    def __init__(self, collection):
+        # this is expecting a mongo collection
+        self.collection = collection
         self.empty_collection()
         self.load_collection()
         pass
@@ -17,7 +17,7 @@ class TeamLogs:
         for season in seasons:
             ap = league.GameLog(player_or_team='T', season=season)
             logs = ap.overall()
-            self.db.team_logs.insert_many(logs.to_dict('records'))
+            self.collection.insert_many(logs.to_dict('records'))
 
     def empty_collection(self):
-        self.db.team_logs.remove({})
+        self.collection.remove({})
