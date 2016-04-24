@@ -11,7 +11,7 @@ class PlayerAvgPts:
 
     def calc_avg_pts(self, batch_size=5):
         count = 0
-        logs = self.collection.find().batch_size(batch_size)
+        logs = self.collection.find()
         for log in logs:
             count += 1
             print(count)
