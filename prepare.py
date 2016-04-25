@@ -2,8 +2,10 @@ from prepare_db import player_avg_pts
 from retrieve_db import game_logs
 from retrieve_db import team_logs
 from pymongo import MongoClient
+import sys
 
-client = MongoClient('52.34.90.220')
+assert str(sys.argv[0]) is not None
+client = MongoClient(str(sys.argv[0]))
 db = client.nba_py
 
 #===============================================================================
@@ -14,12 +16,12 @@ db = client.nba_py
 # ap = game_logs.GameLogs(db.game_logs)
 #===============================================================================
 
-db.model.remove({})
-cursor = db.game_logs.find().batch_size(25)
-for document in cursor:
-    db.model.insert(document)
+#===============================================================================
+# db.model.remove({})
+# cursor = db.game_logs.find().batch_size(25)
+# for document in cursor:
+#     db.model.insert(document)
+#===============================================================================
 
-#===============================================================================
-# ap = player_avg_pts.PlayerAvgPts(db.model)
-# ap.calc_avg_pts()
-#===============================================================================
+ap = player_avg_pts.PlayerAvgPts(db.model)
+ap.calc_avg_pts()
