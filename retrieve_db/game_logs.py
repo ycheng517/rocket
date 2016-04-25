@@ -3,7 +3,7 @@ from nba_py import league
 from pymongo import MongoClient
 
 
-class TeamLogs:
+class GameLogs:
     seasons = ['2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
 
     def __init__(self, collection):
