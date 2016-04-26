@@ -12,36 +12,47 @@ db = client.nba_py
 
 cursor = db.model.find()
 
+allData = []
 allDataX = []
 allDataY = []
 
 variables = [
     'AVG_PTS',
     'AVG_PTS_LAST_5',
-    'AVG_PTS_LAST_1'
+    'AVG_PTS_LAST_1', 
+    'PTS'
 ]
 
 
 count = 0
 for document in cursor:
-    if document['MIN'] >= 10:  # 10 minutes or more, to filter outliers
+    if document['AVG_PTS'] >= 10:  # 10 minutes or more, to filter outliers
         dataRow = []
         for variable in variables:
             dataRow.append(document[variable])
+        allData.append(dataRow)
         allDataX.append(dataRow)
-        allDataY.append(document['pts'])
+        allDataY.append(document['PTS'])
         count = count + 1
-        if count > 40000:
+        if count > 20000:
             break
-
-X = np.array(allDataX)
-y = np.array(allDataY)
+Xy = np.array(allData)
+np.random.shuffle(Xy)
+X = Xy[:, [0,1,2] ]
+y = Xy[:, 3]
+print(np.array(allDataX))
+print(np.array(allDataY))
+print(Xy)
+print(X)
+print(y)
 X_normalized_no_ones = preprocessing.scale(X)
 
 
 X_normalized = np.ones((X_normalized_no_ones.shape[0], X_normalized_no_ones.shape[1]+1))
 X_normalized[:, 1:] = X_normalized_no_ones
 
+print("==================")
+print(X_normalized)
 # Separate into Train and Test datasets
 train_test_split = int(round(len(y) * 0.6))
 X_normalized_train = X_normalized[:train_test_split]

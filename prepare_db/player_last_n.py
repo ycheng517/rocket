@@ -11,7 +11,8 @@ class PlayerLastN:
 
     def calc_last_N(self, prior_days=14, lastN=5, batch_size=50):
         logs = self.collection.find().batch_size(batch_size)
-        field_name = "AVG_PTS_LAST_" + lastN
+        field_name = "AVG_PTS_LAST_" + str(lastN)
+        count = 0
         for log in logs:
             #===========================================================================
             # print("===========================================================")
@@ -24,7 +25,7 @@ class PlayerLastN:
                 {"$match": {
                     "GAME_DATE": {
                         "$lt": log['GAME_DATE'],
-                        "gt": time_prior
+                        "$gt": time_prior
                     },
                     "PLAYER_ID": log['PLAYER_ID'],
                     "SEASON_ID": log['SEASON_ID']
@@ -42,19 +43,9 @@ class PlayerLastN:
                     }
                 }
             ])
-            if games_last_N is None:
-                self.collection.update_one(
-                    {
-                        "_id": log['_id']
-                     },
-                    {
-                        "$set": {
-                             field_name: log["AVG_PTS"]
-                         }
-                     },
-                    upsert=True
-                )
+            lastN_calculated = False
             for document in games_last_N:
+                lastN_calculated = True
                 self.collection.update_one(
                     {
                         "_id": log['_id']
@@ -66,6 +57,23 @@ class PlayerLastN:
                      },
                     upsert=True
                 )
+            if lastN_calculated == False:
+                print("special case: %s, %s" % (log['PLAYER_NAME'], log['GAME_DATE']))
+                self.collection.update_one(
+                    {
+                        "_id": log['_id']
+                     },
+                    {
+                        "$set": {
+                             field_name: log["AVG_PTS"]
+                         }
+                     },
+                    upsert=True
+                )
+            count += 1
+            if count % 100 == 0:
+                print(count)
+
             #FOR VERIFICATION
             #===========================================================================
             # games_last_5 = db.model.aggregate([

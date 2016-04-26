@@ -29,8 +29,8 @@ db = client.nba_py
 #ap.calc_avg_pts()
 #===============================================================================
 
-#ap = player_last_n.PlayerLastN(db.model)
-#ap.calc_last_N()
+ap = player_last_n.PlayerLastN(db.model)
+ap.calc_last_N()
 
-#-------------------------------------- ap = player_last_n.PlayerLastN(db.model)
-#----------------------------------------- ap.calc_last_N(prior_days=7, lastN=1)
+ap = player_last_n.PlayerLastN(db.model)
+ap.calc_last_N(prior_days=7, lastN=1)
