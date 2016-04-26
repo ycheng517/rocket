@@ -6,8 +6,8 @@ from pymongo import MongoClient
 from sklearn import linear_model, preprocessing, metrics
 
 
-assert str(sys.argv[0]) is not None
-client = MongoClient(str(sys.argv[0]))
+assert str(sys.argv[1]) is not None
+client = MongoClient(str(sys.argv[1]))
 db = client.nba_py
 
 cursor = db.model.find()
