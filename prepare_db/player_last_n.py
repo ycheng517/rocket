@@ -25,7 +25,7 @@ class PlayerLastN:
                     "GAME_DATE": {
                         "$lt": log['GAME_DATE'],
                         "gt": time_prior
-                    }, 
+                    },
                     "PLAYER_ID": log['PLAYER_ID'],
                     "SEASON_ID": log['SEASON_ID']
                     }

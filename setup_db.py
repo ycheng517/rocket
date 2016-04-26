@@ -1,11 +1,12 @@
 from prepare_db import player_avg_pts
+from prepare_db import player_last_n
 from retrieve_db import game_logs
 from retrieve_db import team_logs
 from pymongo import MongoClient
 import sys
 
-assert str(sys.argv[0]) is not None
-client = MongoClient(str(sys.argv[0]))
+assert str(sys.argv[1]) is not None
+client = MongoClient(str(sys.argv[1]))
 db = client.nba_py
 
 #===============================================================================
@@ -23,5 +24,13 @@ db = client.nba_py
 #     db.model.insert(document)
 #===============================================================================
 
-ap = player_avg_pts.PlayerAvgPts(db.model)
-ap.calc_avg_pts()
+#===============================================================================
+#ap = player_avg_pts.PlayerAvgPts(db.model)
+#ap.calc_avg_pts()
+#===============================================================================
+
+#ap = player_last_n.PlayerLastN(db.model)
+#ap.calc_last_N()
+
+#-------------------------------------- ap = player_last_n.PlayerLastN(db.model)
+#----------------------------------------- ap.calc_last_N(prior_days=7, lastN=1)
