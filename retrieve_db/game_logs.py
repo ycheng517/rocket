@@ -4,7 +4,7 @@ from pymongo import MongoClient
 
 
 class GameLogs:
-    seasons = ['2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
+    seasons = ['2014-15', '2015-16']
 
     def __init__(self, collection):
         # this is expecting a mongo collection
