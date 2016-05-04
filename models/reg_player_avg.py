@@ -26,7 +26,7 @@ variables = [
 
 count = 0
 for document in cursor:
-    if document['AVG_PTS'] >= 10:  # 10 minutes or more, to filter outliers
+    if document['MIN'] >= 10:  # 10 minutes or more, to filter outliers
         dataRow = []
         for variable in variables:
             dataRow.append(document[variable])
