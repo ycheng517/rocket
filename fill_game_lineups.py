@@ -22,7 +22,7 @@ for lineup in lineups:
                      },
                     {
                         "$set": {
-                             ("lineup." + player_id): 1
+                             ("lineup." + player_id): 0
                          }
                      }
                 )
