@@ -22,7 +22,8 @@ class GameLineups:
                 self.collection.update_one(
                     {
                         "GAME_ID": game['GAME_ID'], 
-                        "TEAM_ABBREVIATION": game['TEAM_ABBREVIATION']
+                        "TEAM_ABBREVIATION": game['TEAM_ABBREVIATION'],
+                        "SEASON_ID": game['SEASON_ID']
                      },
                     {
                         "$set": {
