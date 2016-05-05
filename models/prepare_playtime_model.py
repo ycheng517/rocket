@@ -12,7 +12,7 @@ class PlaytimeModel:
 
     def load_minutes(self, game_logs, batch_size=5):
         count = 0
-        logs = self.game_logs.find()
+        logs = game_logs.find()
         for log in logs:
             count += 1
             print(count)
