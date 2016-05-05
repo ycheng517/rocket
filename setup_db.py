@@ -57,5 +57,6 @@ db = client.nba_py
 ap = prepare_playtime_model.PlaytimeModel(db.playtime_model)
 ap.load_minutes(game_logs=db.game_logs)
 ap.load_lineups(game_lineups=db.game_lineups)
+ap.load_avg_min()
 
 

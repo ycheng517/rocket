@@ -19,6 +19,7 @@ class PlaytimeModel:
             print(count)
             self.collection.insert_one({
                                         "GAME_ID": log['GAME_ID'],
+                                        "SEASON_ID": log['SEASON_ID'],
                                         "GAME_DATE": log['GAME_DATE'],
                                         "TEAM_ABBREVIATION": log['TEAM_ABBREVIATION'],
                                         "PLAYER_ID": log['PLAYER_ID'],
@@ -39,5 +40,43 @@ class PlaytimeModel:
                                         },
                                        {"$set": {
                                                 "lineup": lineup['lineup']}
+<<<<<<< HEAD
                                         
                                         })
+=======
+                                        })
+        
+    def load_avg_min(self):
+        count = 0
+        logs = self.collection.find()
+        for log in logs:
+            count += 1
+            print(count)
+            avg_mins = self.collection.aggregate([
+                {"$match": {
+                    "PLAYER_ID": log['PLAYER_ID'],
+                    "SEASON_ID": log['SEASON_ID']
+                    }
+                 },
+                {
+                    "$group": {
+                        "_id": {
+                            "PLAYER_ID": "$PLAYER_ID",
+                            "SEASON_ID": "$SEASON_ID"
+                        },
+                        "AVG_MIN": {"$avg": "$MIN"}
+                    }
+                }
+            ])
+            for document in avg_mins:
+                self.collection.update_one(
+                    {
+                        "_id": log['_id']
+                     },
+                    {
+                        "$set": {
+                             "AVG_MIN": document["AVG_MIN"]
+                         }
+                     }
+                )
+>>>>>>> ffbc7cd9da173cea28127d8d528834e572b06092
