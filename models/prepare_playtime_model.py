@@ -37,7 +37,7 @@ class PlaytimeModel:
             self.collection.update_one({
                                         "_id": log['_id']
                                         },
-                                       {"set": {
+                                       {"$set": {
                                                 "lineup": lineup['lineup']}
                                         
                                         })
