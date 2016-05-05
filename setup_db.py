@@ -6,6 +6,7 @@ from retrieve_db import team_logs
 from retrieve_db import team_opp_logs
 from pymongo import MongoClient
 import sys
+from models import prepare_playtime_model
 
 assert str(sys.argv[1]) is not None
 client = MongoClient(str(sys.argv[1]))
@@ -50,7 +51,11 @@ db = client.nba_py
 #===============================================================================
 
 #~~~~~~~~~~~~MPG Calculations~~~~~~~~~~~~~
-ap = lineups.GameLineups(db.game_lineups)
-ap.calc_game_lineups(game_logs=db.game_logs, team_logs=db.team_logs)
+#------------------------------------- ap = lineups.GameLineups(db.game_lineups)
+#---------- ap.calc_game_lineups(game_logs=db.game_logs, team_logs=db.team_logs)
+
+ap = prepare_playtime_model.PlaytimeModel(db.playtime_model)
+ap.load_minutes(game_logs=db.game_logs)
+
 
 
