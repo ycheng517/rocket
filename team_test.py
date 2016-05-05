@@ -20,6 +20,8 @@ from nba_py.constants import *
 #===============================================================================
 #print(team._api_scrape(ap.json, 1))
 
+#------------------------------------------------------------------------------ 
+#------------------------ ap = team.TeamCommonRoster(team_id=TEAMS['CLE']['id'])
+#------------------------------------------------------------ print(ap.roster())
 
-ap = team.TeamCommonRoster(team_id=TEAMS['CLE']['id'])
-print(ap.roster())
+#map reduce example: 
