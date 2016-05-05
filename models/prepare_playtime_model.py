@@ -40,10 +40,6 @@ class PlaytimeModel:
                                         },
                                        {"$set": {
                                                 "lineup": lineup['lineup']}
-<<<<<<< HEAD
-                                        
-                                        })
-=======
                                         })
         
     def load_avg_min(self):
