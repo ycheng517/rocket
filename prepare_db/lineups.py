@@ -27,7 +27,7 @@ class GameLineups:
                      },
                     {
                         "$set": {
-                             ("lineup." + player['PLAYER_ID']): 1
+                             ("lineup." + str(player['PLAYER_ID'])): 1
                          }
                      },
                     upsert=True
