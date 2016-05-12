@@ -17,7 +17,11 @@ class GameLineups:
             print(count)
             players = game_logs.find({
                           "GAME_ID": game['GAME_ID'],
-                          "TEAM_ABBREVIATION": game['TEAM_ABBREVIATION']})
+                          "TEAM_ABBREVIATION": game['TEAM_ABBREVIATION'], 
+                          #to filter out players playing because of garbage time
+                          #maybe a good thing to filter out players leaving game
+                          #early due to injury as well
+                          "MIN": {"$gt": 10}})
             for player in players:
                 self.collection.update_one(
                     {
