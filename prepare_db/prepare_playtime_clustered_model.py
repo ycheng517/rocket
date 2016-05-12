@@ -34,6 +34,8 @@ class PlaytimeModel:
             lineup = game_lineups.find_one({
                                   "GAME_ID": log['GAME_ID'], 
                                   "TEAM_ABBREVIATION": log['TEAM_ABBREVIATION']})
+            for player in lineup['lineup']:
+                
             self.collection.update_one({
                                         "_id": log['_id']
                                         },
@@ -73,5 +75,4 @@ class PlaytimeModel:
                              "AVG_MIN": document["AVG_MIN"]
                          }
                      }
-
                 )

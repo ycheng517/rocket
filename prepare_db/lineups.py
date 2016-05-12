@@ -26,9 +26,7 @@ class GameLineups:
                         "SEASON_ID": game['SEASON_ID']
                      },
                     {
-                        "$set": {
-                             ("lineup." + str(player['PLAYER_ID'])): 1
-                         }
+                        "$push": { "lineup": player['PLAYER_ID'] }
                      },
                     upsert=True
                 )

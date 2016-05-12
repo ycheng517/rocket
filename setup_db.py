@@ -4,6 +4,7 @@ from prepare_db import lineups
 from retrieve_db import game_logs, team_opp_logs
 from retrieve_db import team_logs
 from retrieve_db import team_opp_logs
+from retrieve_db import player_averages
 from pymongo import MongoClient
 import sys
 from models import prepare_playtime_model
@@ -26,6 +27,8 @@ db = client.nba_py
 #===============================================================================
 # ap = team_opp_logs.TeamOppLogs(db.team_opp_logs)
 #===============================================================================
+
+#----------------------- ap = player_averages.PlayerAverages(db.player_averages)
 
 #~~~~~~~~~~~~Copy DB to model~~~~~~~~~~~~~
 #===============================================================================
@@ -51,12 +54,14 @@ db = client.nba_py
 #===============================================================================
 
 #~~~~~~~~~~~~MPG Calculations~~~~~~~~~~~~~
-#------------------------------------- ap = lineups.GameLineups(db.game_lineups)
-#---------- ap.calc_game_lineups(game_logs=db.game_logs, team_logs=db.team_logs)
+ap = lineups.GameLineups(db.game_lineups)
+ap.calc_game_lineups(game_logs=db.game_logs, team_logs=db.team_logs)
 
-ap = prepare_playtime_model.PlaytimeModel(db.playtime_model)
-ap.load_minutes(game_logs=db.game_logs)
-ap.load_lineups(game_lineups=db.game_lineups)
-ap.load_avg_min()
+#===============================================================================
+# ap = prepare_playtime_model.PlaytimeModel(db.playtime_model)
+# ap.load_minutes(game_logs=db.game_logs)
+# ap.load_lineups(game_lineups=db.game_lineups)
+# ap.load_avg_min()
+#===============================================================================
 
 

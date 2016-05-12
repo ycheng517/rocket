@@ -61,7 +61,7 @@ y_train = y[:train_test_split]
 y_test = y[train_test_split:]
 
 # train model
-regr = linear_model.LinearRegression()
+regr = linear_model.LinearRegression(fit_intercept=True)
 regr.fit(X_normalized_train, y_train)
 
 # The coefficients
@@ -82,7 +82,7 @@ print('R2 score: %.2f' % metrics.r2_score(y_test,
 
 # compare against dumb model which is just the ppg average
 print('dumb average RSS: %.2f' % np.mean((X[:, 0] - y) ** 2))
-dumb_regr = linear_model.LinearRegression()
+dumb_regr = linear_model.LinearRegression(fit_intercept=True)
 X_reshaped = X[:, 0].reshape(-1, 1)
 print(X_reshaped.shape)
 dumb_regr.fit(X_reshaped, y)
