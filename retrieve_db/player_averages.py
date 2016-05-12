@@ -17,7 +17,8 @@ class PlayerAverages:
         for season in seasons:
             ap = league.PlayerStats(season=season)
             logs = ap.overall()
-            d = logs.to_dict('records')
-            d["SEASON_ID"] = season
-            self.collection.insert_many(d)
+            players_list = logs.to_dict('records')
+            for d in players_list: 
+                d["SEASON_ID"] = season
+            self.collection.insert_many(players_list)
 
