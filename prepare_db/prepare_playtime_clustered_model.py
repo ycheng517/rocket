@@ -1,6 +1,5 @@
 from __future__ import print_function
 from pymongo import MongoClient
-from datetime import datetime, timedelta
 
 
 class PlaytimeModel:
@@ -10,22 +9,29 @@ class PlaytimeModel:
         self.collection = collection
         self.collection.remove({})
 
-    def load_minutes(self, game_logs):
+    def load_minutes(self, game_logs, player_averages):
         count = 0
+        groups = player_averages.distinct( "PLAYER_GROUP" )
+        empty_groups = {}
+        for group in groups: 
+            empty_groups.update({str(group): 0})
+
         logs = game_logs.find()
         for log in logs:
             count += 1
             print(count)
-            self.collection.insert_one({
-                                        "GAME_ID": log['GAME_ID'],
-                                        "SEASON_ID": log['SEASON_ID'],
-                                        "GAME_DATE": log['GAME_DATE'],
-                                        "TEAM_ABBREVIATION": log['TEAM_ABBREVIATION'],
-                                        "PLAYER_ID": log['PLAYER_ID'],
-                                        "MIN": log['MIN']
-                                        })
-
-    def load_lineups(self, game_lineups):
+            
+            dataRow = {
+                "GAME_ID": log['GAME_ID'],
+                "SEASON_ID": log['SEASON_ID'],
+                "GAME_DATE": log['GAME_DATE'],
+                "TEAM_ABBREVIATION": log['TEAM_ABBREVIATION'],
+                "PLAYER_ID": log['PLAYER_ID'],
+                "MIN": log['MIN']}
+            dataRow.update(empty_groups)
+            self.collection.insert_one(dataRow)
+            
+    def load_lineups(self, game_lineups, player_averages):
         count = 0
         minute_logs = self.collection.find()
         for log in minute_logs:
@@ -35,13 +41,12 @@ class PlaytimeModel:
                                   "GAME_ID": log['GAME_ID'], 
                                   "TEAM_ABBREVIATION": log['TEAM_ABBREVIATION']})
             for player in lineup['lineup']:
-                
-            self.collection.update_one({
-                                        "_id": log['_id']
-                                        },
-                                       {"$set": {
-                                                "lineup": lineup['lineup']}
-                                        })
+                teammate = player_averages.find_one({"SEASON_ID": log['SEASON_ID'],
+                                          "PLAYER_ID": player, 
+                                          "TEAM_ABBREVIATION": log['TEAM_ABBREVIATION']
+                                          })
+                self.collection.update_one({"_id": log['_id']},
+                                           {"$inc": {str(teammate['PLAYER_GROUP']): 1}})
         
     def load_avg_min(self):
         count = 0
