@@ -19,6 +19,6 @@ class PlayerAverages:
             logs = ap.overall()
             players_list = logs.to_dict('records')
             for d in players_list: 
-                d["SEASON_ID"] = season
+                d["SEASON_ID"] = str(2)+season[:4]
             self.collection.insert_many(players_list)
 
