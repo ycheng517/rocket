@@ -28,7 +28,7 @@ db = client.nba_py
 # ap = team_opp_logs.TeamOppLogs(db.team_opp_logs)
 #===============================================================================
 
-ap = player_averages.PlayerAverages(db.player_averages)
+#----------------------- ap = player_averages.PlayerAverages(db.player_averages)
 
 #~~~~~~~~~~~~Copy DB to model~~~~~~~~~~~~~
 #===============================================================================
@@ -54,8 +54,8 @@ ap = player_averages.PlayerAverages(db.player_averages)
 #===============================================================================
 
 #~~~~~~~~~~~~MPG Calculations~~~~~~~~~~~~~
-#------------------------------------- ap = lineups.GameLineups(db.game_lineups)
-#---------- ap.calc_game_lineups(game_logs=db.game_logs, team_logs=db.team_logs)
+ap = lineups.GameLineups(db.game_lineups)
+ap.calc_game_lineups(game_logs=db.game_logs, team_logs=db.team_logs)
 
 #===============================================================================
 # ap = prepare_playtime_model.PlaytimeModel(db.playtime_model)
