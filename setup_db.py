@@ -29,7 +29,7 @@ db = client.nba_py
 # ap = team_opp_logs.TeamOppLogs(db.team_opp_logs)
 #===============================================================================
 
-#----------------------- ap = player_averages.PlayerAverages(db.player_averages)
+ap = player_averages.PlayerAverages(db.player_averages)
 
 #~~~~~~~~~~~~Copy DB to model~~~~~~~~~~~~~
 #===============================================================================
