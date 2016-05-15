@@ -27,6 +27,7 @@ class PlaytimeModel:
                 "GAME_DATE": log['GAME_DATE'],
                 "TEAM_ABBREVIATION": log['TEAM_ABBREVIATION'],
                 "PLAYER_ID": log['PLAYER_ID'],
+                "PLAYER_NAME": log['PLAYER_NAME'],
                 "MIN": log['MIN']}
             dataRow.update(empty_groups)
             self.collection.insert_one(dataRow)
@@ -48,36 +49,23 @@ class PlaytimeModel:
                 self.collection.update_one({"_id": log['_id']},
                                            {"$inc": {str(teammate['PLAYER_GROUP']): 1}})
         
-    def load_avg_min(self):
+    def load_avg_min(self, player_averages):
         count = 0
         logs = self.collection.find()
         for log in logs:
             count += 1
             print(count)
-            avg_mins = self.collection.aggregate([
-                {"$match": {
-                    "PLAYER_ID": log['PLAYER_ID'],
-                    "SEASON_ID": log['SEASON_ID']
-                    }
+            player_avg = player_averages.find_one({"PLAYER_ID": log['PLAYER_ID'],
+                                             "SEASON_ID": log['SEASON_ID'],
+                                             "TEAM_ABBREVIATION": log['TEAM_ABBREVIATION']
+                                             })
+            self.collection.update_one(
+                {
+                    "_id": log['_id']
                  },
                 {
-                    "$group": {
-                        "_id": {
-                            "PLAYER_ID": "$PLAYER_ID",
-                            "SEASON_ID": "$SEASON_ID"
-                        },
-                        "AVG_MIN": {"$avg": "$MIN"}
-                    }
-                }
-            ])
-            for document in avg_mins:
-                self.collection.update_one(
-                    {
-                        "_id": log['_id']
-                     },
-                    {
-                        "$set": {
-                             "AVG_MIN": document["AVG_MIN"]
-                         }
+                    "$set": {
+                         "AVG_MIN": player_avg["AVG_MIN"]
                      }
-                )
+                 }
+            )

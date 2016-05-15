@@ -1,8 +1,7 @@
 import sys
 import numpy as np
 from pymongo import MongoClient
-from sklearn import linear_model, preprocessing, cluster
-import matplotlib.pyplot as plt
+from sklearn import preprocessing, cluster
 
 assert str(sys.argv[1]) is not None
 client = MongoClient(str(sys.argv[1]))
@@ -10,12 +9,12 @@ db = client.nba_py
 
 all_players = db.player_averages.find()
 
-variables = ['FGM', 'FGA',
-             'FG3M', 'FG3A',
-             'FTM', 'FTA',
-             'REB', 'AST',
-             'STL', 'BLK',
-             'TOV'
+variables = ['AVG_FGM', 'AVG_FGA',
+             'AVG_FG3M', 'AVG_FG3A',
+             'AVG_FTM', 'AVG_FTA',
+             'AVG_REB', 'AVG_AST',
+             'AVG_STL', 'AVG_BLK',
+             'AVG_TOV'
              ]
 X_list = []
 _id_list = []
