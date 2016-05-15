@@ -68,7 +68,10 @@ for k in ALPHA_VALS:
                 y_test = y[train_test_split:]
                 
                 # train model
-                regr = linear_model.Lasso(alpha=k, fit_intercept=True)
+                if k == 0: 
+                    regr = linear_model.LinearRegression(fit_intercept=True)
+                else: 
+                    regr = linear_model.Lasso(alpha=k, fit_intercept=True)
                 regr.fit(X_normalized_train, y_train)
                 
                 # Coefficients
