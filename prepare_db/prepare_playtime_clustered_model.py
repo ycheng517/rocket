@@ -87,9 +87,9 @@ class PlaytimeModel:
             visitor_team_pct = team_stats.find_one({"TEAM_ID": str(game_log['VISITOR_TEAM_ID']),
                                                    "SEASON_ID": game_log['SEASON_ID']})['Road_WIN_PCT']
             if game_log['TEAM_ID'] == game_log['HOME_TEAM_ID']:
-                win_chance = home_team_pct / visitor_team_pct
+                win_chance = home_team_pct - visitor_team_pct
             else:
-                win_chance = visitor_team_pct / home_team_pct
+                win_chance = visitor_team_pct - home_team_pct
             self.collection.update_one({"_id": log['_id']}, 
                                    {"$set": {"WIN_CHANCE": win_chance, 
                                              "MATCHUP": game_log['MATCHUP']}})
