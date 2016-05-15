@@ -82,6 +82,7 @@ class PlaytimeModel:
             print(count)
             game_log = game_logs.find_one({"GAME_ID": log['GAME_ID'], 
                                        "TEAM_ABBREVIATION": log['TEAM_ABBREVIATION']})
+            print(game_log)
             home_team_pct = team_stats.find_one({"TEAM_ID": game_log['HOME_TEAM_ID'],
                                                    "SEASON_ID": game_log['SEASON_ID']})['Home_WIN_PCT']
             visitor_team_pct = team_stats.find_one({"TEAM_ID": game_log['VISITOR_TEAM_ID'],
