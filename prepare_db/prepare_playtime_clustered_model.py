@@ -92,5 +92,5 @@ class PlaytimeModel:
                 win_chance = visitor_team_pct / home_team_pct
             self.collection.update_one({"_id": log['_id']}, 
                                    {"$set": {"WIN_CHANCE": win_chance, 
-                                             "MATCHUP": log['MATCHUP']}})
+                                             "MATCHUP": game_log['MATCHUP']}})
         
