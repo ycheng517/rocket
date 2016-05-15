@@ -82,9 +82,9 @@ class PlaytimeModel:
             game_log = game_logs.find_one({"GAME_ID": log['GAME_ID'], 
                                        "TEAM_ABBREVIATION": log['TEAM_ABBREVIATION']})
             print(game_log)
-            home_team_pct = team_stats.find_one({"TEAM_ID": game_log['HOME_TEAM_ID'],
+            home_team_pct = team_stats.find_one({"TEAM_ID": str(game_log['HOME_TEAM_ID']),
                                                    "SEASON_ID": game_log['SEASON_ID']})['Home_WIN_PCT']
-            visitor_team_pct = team_stats.find_one({"TEAM_ID": game_log['VISITOR_TEAM_ID'],
+            visitor_team_pct = team_stats.find_one({"TEAM_ID": str(game_log['VISITOR_TEAM_ID']),
                                                    "SEASON_ID": game_log['SEASON_ID']})['Road_WIN_PCT']
             if game_log['TEAM_ID'] == game_log['HOME_TEAM_ID']:
                 win_chance = home_team_pct / visitor_team_pct

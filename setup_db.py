@@ -70,10 +70,10 @@ db = client.nba_py
 # ap.load_lineups(game_lineups=db.game_lineups, player_averages=db.player_averages)
 
 ap = prepare_playtime_clustered_model.PlaytimeModel(db.playtime_model)
-ap.empty_collection()
-ap.load_minutes(game_logs=db.game_logs, player_averages=db.player_averages)
-ap.load_lineups(game_lineups=db.game_lineups, player_averages=db.player_averages)
-ap.load_avg_stats(player_averages = db.player_averages)
+#--------------------------------------------------------- ap.empty_collection()
+#--- ap.load_minutes(game_logs=db.game_logs, player_averages=db.player_averages)
+# ap.load_lineups(game_lineups=db.game_lineups, player_averages=db.player_averages)
+#----------------------- ap.load_avg_stats(player_averages = db.player_averages)
 ap.load_team_records(db.game_logs, db.team_stats)
 
 
