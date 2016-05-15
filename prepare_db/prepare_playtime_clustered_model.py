@@ -65,7 +65,8 @@ class PlaytimeModel:
                  },
                 {
                     "$set": {
-                         "AVG_MIN": player_avg["AVG_MIN"]
+                         "AVG_MIN": player_avg["AVG_MIN"],
+                         "PLAYER_GROUP": player_avg['PLAYER_GROUP']
                      }
                  }
             )
