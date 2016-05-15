@@ -7,7 +7,6 @@ class PlaytimeModel:
     def __init__(self, collection):
         # this is expecting a mongo collection
         self.collection = collection
-        self.empty_collection()
         
     def empty_collection(self):
         self.collection.remove({})
