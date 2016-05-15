@@ -5,6 +5,7 @@ from retrieve_db import game_logs, team_opp_logs
 from retrieve_db import team_logs
 from retrieve_db import team_opp_logs
 from retrieve_db import player_averages
+from retrieve_db import team_stats
 from prepare_db import prepare_playtime_clustered_model
 from prepare_db import player_avg_stats
 from pymongo import MongoClient
@@ -22,15 +23,16 @@ db = client.nba_py
 # ap = team_logs.TeamLogs(db.team_logs)
 #===============================================================================
 
-#===============================================================================
-# ap = game_logs.GameLogs(db.game_logs)
-#===============================================================================
+ap = game_logs.GameLogs(db.game_logs)
+ap.add_team_ids()
 
 #===============================================================================
 # ap = team_opp_logs.TeamOppLogs(db.team_opp_logs)
 #===============================================================================
 
 #ap = player_averages.PlayerAverages(db.player_averages)
+
+#-------------------------------------- ap = team_stats.TeamStats(db.team_stats)
 
 #~~~~~~~~~~~~Copy DB to model~~~~~~~~~~~~~
 #===============================================================================
@@ -67,9 +69,9 @@ db = client.nba_py
 #--- ap.load_minutes(game_logs=db.game_logs, player_averages=db.player_averages)
 # ap.load_lineups(game_lineups=db.game_lineups, player_averages=db.player_averages)
 
-ap = prepare_playtime_clustered_model.PlaytimeModel(db.playtime_model)
-ap.load_minutes(game_logs=db.game_logs, player_averages=db.player_averages)
-ap.load_lineups(game_lineups=db.game_lineups, player_averages=db.player_averages)
-ap.load_avg_min(player_averages = db.player_averages)
+#-------- ap = prepare_playtime_clustered_model.PlaytimeModel(db.playtime_model)
+#--- ap.load_minutes(game_logs=db.game_logs, player_averages=db.player_averages)
+# ap.load_lineups(game_lineups=db.game_lineups, player_averages=db.player_averages)
+#------------------------- ap.load_avg_min(player_averages = db.player_averages)
 
 
