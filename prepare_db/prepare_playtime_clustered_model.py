@@ -7,6 +7,9 @@ class PlaytimeModel:
     def __init__(self, collection):
         # this is expecting a mongo collection
         self.collection = collection
+        self.empty_collection()
+        
+    def empty_collection(self):
         self.collection.remove({})
 
     def load_minutes(self, game_logs, player_averages):
@@ -49,7 +52,7 @@ class PlaytimeModel:
                 self.collection.update_one({"_id": log['_id']},
                                            {"$inc": {str(teammate['PLAYER_GROUP']): 1}})
         
-    def load_avg_min(self, player_averages):
+    def load_avg_stats(self, player_averages):
         count = 0
         logs = self.collection.find()
         for log in logs:
@@ -70,3 +73,24 @@ class PlaytimeModel:
                      }
                  }
             )
+            
+    def load_team_records(self, game_logs, team_stats):
+        logs = self.collection.find()
+        count = 0
+        for log in logs: 
+            count += 1
+            print(count)
+            game_log = game_logs.find_one({"GAME_ID": log['GAME_ID'], 
+                                       "TEAM_ABBREVIATION": log['TEAM_ABBREVIATION']})
+            home_team_pct = team_stats.find_one({"TEAM_ID": game_log['HOME_TEAM_ID'],
+                                                   "SEASON_ID": game_log['SEASON_ID']})['Home_WIN_PCT']
+            visitor_team_pct = team_stats.find_one({"TEAM_ID": game_log['VISITOR_TEAM_ID'],
+                                                   "SEASON_ID": game_log['SEASON_ID']})['Road_WIN_PCT']
+            if game_log['TEAM_ID'] == game_log['HOME_TEAM_ID']:
+                win_chance = home_team_pct / visitor_team_pct
+            else:
+                win_chance = visitor_team_pct / home_team_pct
+            self.collection.update_one({"_id": log['_id']}, 
+                                   {"$set": {"WIN_CHANCE": win_chance, 
+                                             "MATCHUP": log['MATCHUP']}})
+        

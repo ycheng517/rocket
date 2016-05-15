@@ -23,8 +23,8 @@ db = client.nba_py
 # ap = team_logs.TeamLogs(db.team_logs)
 #===============================================================================
 
-ap = game_logs.GameLogs(db.game_logs)
-ap.add_team_ids(db.team_logs)
+#----------------------------------------- ap = game_logs.GameLogs(db.game_logs)
+#------------------------------------------------- ap.add_team_ids(db.team_logs)
 
 #===============================================================================
 # ap = team_opp_logs.TeamOppLogs(db.team_opp_logs)
@@ -69,9 +69,10 @@ ap.add_team_ids(db.team_logs)
 #--- ap.load_minutes(game_logs=db.game_logs, player_averages=db.player_averages)
 # ap.load_lineups(game_lineups=db.game_lineups, player_averages=db.player_averages)
 
-#-------- ap = prepare_playtime_clustered_model.PlaytimeModel(db.playtime_model)
+ap = prepare_playtime_clustered_model.PlaytimeModel(db.playtime_model)
 #--- ap.load_minutes(game_logs=db.game_logs, player_averages=db.player_averages)
 # ap.load_lineups(game_lineups=db.game_lineups, player_averages=db.player_averages)
-#------------------------- ap.load_avg_min(player_averages = db.player_averages)
+#----------------------- ap.load_avg_stats(player_averages = db.player_averages)
+ap.load_team_records(db.game_logs, db.team_stats)
 
 
