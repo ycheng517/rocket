@@ -32,10 +32,8 @@ class GameLogs:
             ap = game.Boxscore(game_id=log['GAME_ID'])
             summary = ap.game_summary().to_dict('records')
             self.collection.update_many({"GAME_ID": logs['GAME_ID'],
-                                         "TEAM_ABBREVIATION": log['TEAM_ABBREVIATION']},
-                                   {"$set": {
-                                             "TEAM_ID": log['TEAM_ID'],
-                                             "HOME_TEAM_ID": summary[0]['HOME_TEAM_ID'],
-                                             "AWAY_TEAM_ID": summary[0]['AWAY_TEAM_ID']
-                                             }})
+                                    "TEAM_ABBREVIATION": log['TEAM_ABBREVIATION']},
+                                   {"TEAM_ID": log['TEAM_ID'],
+                                    "HOME_TEAM_ID": summary[0]['HOME_TEAM_ID'],
+                                    "AWAY_TEAM_ID": summary[0]['AWAY_TEAM_ID']})
             

@@ -24,7 +24,7 @@ db = client.nba_py
 #===============================================================================
 
 ap = game_logs.GameLogs(db.game_logs)
-ap.add_team_ids()
+ap.add_team_ids(db.team_logs)
 
 #===============================================================================
 # ap = team_opp_logs.TeamOppLogs(db.team_opp_logs)
