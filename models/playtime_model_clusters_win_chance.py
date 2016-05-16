@@ -44,6 +44,7 @@ for k in ALPHA_VALS:
                 for variable in variables:
                     dataRow.append(document[variable])
                 dataRow.append(document['AVG_MIN'])
+                dataRow.append((document['WIN_CHANCE'])**2)
                 dataRow.append(document['MIN'])
                 allData.append(dataRow)
                 allDumbData.append([document['AVG_MIN'], document['MIN']])
