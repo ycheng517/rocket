@@ -14,7 +14,7 @@ for t in team_list_list:
             teams.append(t)
             print t
 print count
-client = MongoClient()
+client = MongoClient("52.41.52.130", 27017)
 db = client.nba_stats
 
 for season in seasons:
