@@ -25,7 +25,7 @@ for season in seasons:
         for log in logs:
             log['TEAM_ID'] = t['TEAM_ID']
         db.team_stats.insert_many(logs)
-        general_splits = team.TeamGeneralSplits(t['TEAM_ID'], measure_type=MeasureType.Opponent)
+        general_splits = team.TeamGeneralSplits(t['TEAM_ID'], measure_type=MeasureType.Opponent, season=sea)
         logs = general_splits.overall()
         for log in logs:
             log['TEAM_ID'] = t['TEAM_ID']

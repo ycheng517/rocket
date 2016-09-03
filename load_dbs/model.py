@@ -1,5 +1,6 @@
 from nba_py import game
 from pymongo import MongoClient
+import pprint
 
 seasons = ['2013-14', '2014-15', '2015-16']
 
@@ -7,27 +8,18 @@ client = MongoClient("52.41.52.130", 27017)
 db = client.nba_stats
 
 games = db.game_summary.find()
-
+count = 0
 
 for game in games:
-    print game['GAME_ID']
-    print ("SEASON YEAR STRING: %s" % (game['SEASON'] + '-' + str(int(game['SEASON'][2:]) + 1)))
+    # print game['GAME_ID']
     home_team_stats = db.team_stats.find_one({"TEAM_ID": int(game["HOME_TEAM_ID"]),
                                               })
-    print "home_team_stats"
-    print home_team_stats
     home_team_opp_stats = db.team_opponent_stats.find_one({"TEAM_ID": game["HOME_TEAM_ID"],
                                                            "SEASON_YEAR": game['SEASON'] + '-' + str(int(game['SEASON'][2:]) + 1)})
-    print "home_team_opp_stats"
-    print home_team_opp_stats
     visitor_team_stats = db.team_stats.find_one({"TEAM_ID": game["VISITOR_TEAM_ID"],
                                                  "SEASON_YEAR": game['SEASON'] + '-' + str(int(game['SEASON'][2:]) + 1)})
-    print "visitor_team_stats"
-    print visitor_team_stats
     visitor_team_opp_stats = db.team_opponent_stats.find_one({"TEAM_ID": game["VISITOR_TEAM_ID"],
                                                               "SEASON_YEAR": game['SEASON'] + '-' + str(int(game['SEASON'][2:]) + 1)})
-    print "visitor_team_opp_stats"
-    print visitor_team_opp_stats
     
     #get all players who played in the game:
     active_players = db.game_logs.find({'GAME_ID': game['GAME_ID']})
@@ -38,7 +30,7 @@ for game in games:
                                               'SEASON_ID': player['SEASON_ID']})
         if player['MIN'] > 15:
             sample = {}
-            output = player['PTS']
+            sample['GAME_PTS'] = player['PTS']
             sample['PLAYER_ID'] = player['PLAYER_ID']
             sample['SEASON_ID'] = player['SEASON_ID']
             sample['PLAYER_NAME'] = player['PLAYER_NAME']
@@ -51,6 +43,7 @@ for game in games:
             sample['AVG_FTM'] = avg_stats['FTM']
             sample['AVG_FG3A'] = avg_stats['FG3A']
             sample['AVG_FG3M'] = avg_stats['FG3M']
+            sample['AVG_PTS'] = avg_stats['PTS']
             sample['AVG_REB'] = avg_stats['REB']
             sample['AVG_DREB'] = avg_stats['DREB']
             sample['AVG_AST'] = avg_stats['AST']
@@ -60,10 +53,7 @@ for game in games:
             sample['AVG_PF'] = avg_stats['PF']
             sample['AVG_PFD'] = avg_stats['PFD']
             sample['AVG_TOV'] = avg_stats['TOV']
-            print type(player['TEAM_ID'])
-            print type(game['HOME_TEAM_ID'])
             if player['TEAM_ID'] == str(game['HOME_TEAM_ID']):
-                print "this is being called"
                 # team stats
                 sample['TEAM_W_PCT'] = home_team_stats['W_PCT']
                 sample['TEAM_PLUS_MINUS'] = home_team_stats['PLUS_MINUS']
@@ -139,8 +129,10 @@ for game in games:
                 sample['OPP_TOV'] = home_team_opp_stats['OPP_TOV']
                 sample['OPP_PF'] = home_team_opp_stats['OPP_PF']
                 sample['OPP_PFD'] = home_team_opp_stats['OPP_PFD']
-            print(sample)
-            break
+            #pprint.pprint(sample)
+            db.basic_model.insert(sample)
+            count += 1
+            print count
 
     # get scoring averages for all players who played in the game
     
