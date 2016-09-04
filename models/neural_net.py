@@ -1,9 +1,7 @@
-import pprint
 from pymongo import MongoClient
 import numpy as np
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.linear_model import LinearRegression, Ridge, Lasso
-from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.metrics import mean_squared_error, r2_score
+
 
 seasons = ['2013-14', '2014-15', '2015-16']
 
@@ -137,14 +135,14 @@ carmelo_y = sample['GAME_PTS']
 
 
 # generate data set
-all_data_x = np.array(all_data_x)
-all_data_y = np.array(all_data_y)
+X = np.array(all_data_x)
+y = np.array(all_data_y)
 
 n_train = 35000
-X_train = all_data_x[:n_train]
-y_train = all_data_y[:n_train]
-X_test = all_data_x[n_train:]
-y_test = all_data_y[n_train:]
+X_train = X[:n_train]
+y_train = y[:n_train]
+X_test = X[n_train:]
+y_test = y[n_train:]
 idx = np.arange(n_train)
 np.random.seed(13)
 np.random.shuffle(idx)
@@ -163,59 +161,76 @@ y_train = y_train[idx]
 #------------------------------------------------ y_test = (y_test - mean) / std
 #------------------------------------------ carmelo_y = (carmelo_y - mean) / std
 
-# regression models
-avg_pts = X_test[:,8]
-print("baseline score: %f" % r2_score(avg_pts, y_test))
+#------------------------------------------------------------- #train neural net
+#----------------------------------- print("training neural net\n=============")
+#---------------------------------------------------------- model = Sequential()
+#------------------------------------------------------------------------------ 
+#------------------------------------------------------------------------------ 
+#------------------------------------ from keras.layers import Dense, Activation
+#------------------------------------------------------------------------------ 
+#--------------------------------- model.add(Dense(output_dim=25, input_dim=52))
+#------------------------------------------------- model.add(Activation("relu"))
+#------------------------------------------------ model.add(Dense(output_dim=1))
+#---------------------------------------------- model.add(Activation("softmax"))
+#------------------------------------------------------------------------------ 
+# model.compile(loss='binary_crossentropy', optimizer='sgd', metrics=['accuracy'])
+#------------------------------------------------------------------------------ 
+#---------------------------------------------------------------------- seed = 7
+#---------------------------------------------------------- np.random.seed(seed)
+#------------------------------------ # evaluate model with standardized dataset
+# estimator = KerasRegressor(build_fn=model, nb_epoch=100, batch_size=5, verbose=0)
+#------------------------------------------------------------------------------ 
+#------------------------------------------------------------------------------ 
+#----------------------- model.fit(X_train, y_train, nb_epoch=50, batch_size=50)
+#------------------------------------------------------------------------------ 
+#-------------- loss_and_metrics = model.evaluate(X_test, y_test, batch_size=50)
+#----------------------- print("printing loss and metrics\n===================")
+#------------------------------------------------------- print(loss_and_metrics)
 
+
+
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.wrappers.scikit_learn import KerasRegressor
+from sklearn.cross_validation import cross_val_score
+from sklearn.cross_validation import KFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
+# define base mode
+def baseline_model():
+    # create model
+    model = Sequential()
+    model.add(Dense(26, input_dim=52, init='normal', activation='linear'))
+    model.add(Dense(13, init='normal', activation='linear'))
+    model.add(Dense(7, init='normal', activation='linear'))
+    model.add(Dense(1, init='normal'))
+    # Compile model
+    model.compile(loss='mse', optimizer='rmsprop')
+    return model
 
+# evaluate model with standardized dataset
 estimators = []
 estimators.append(('standardize', StandardScaler()))
-estimators.append(('mlp', RandomForestRegressor(n_estimators=500, n_jobs=-1, 
-                                     min_samples_split=50, min_samples_leaf=10,
-                                     max_features=15)))
+estimators.append(('mlp', KerasRegressor(build_fn=baseline_model, nb_epoch=100, batch_size=128, verbose=1)))
 pipeline = Pipeline(estimators)
-
-
 pipeline.fit(X_train, y_train)
 y_test_est = pipeline.predict(X_test)
-print("random forest score: %f" % pipeline.score(X_test, y_test))
-print("random forest MSE; %f" % mean_squared_error(y_test, y_test_est))
+#------------------------------------------- kfold = KFold(n=len(X), n_folds=10)
+#------------------------------------- print ("\nNumber of folds: \n==========")
+#------------------------------------------------------------------- print kfold
+#--------------------------- results = cross_val_score(pipeline, X, y, cv=kfold)
+#-------------------------------------------------------------------- print "\n"
+#----------------------------------------------------------------- print results
+#------ print("Standardized: %.2f (%.2f) MSE" % (results.mean(), results.std()))
+print "\nPrediction Resuls\n==============="
 
+# estimator = KerasRegressor(build_fn=baseline_model, nb_epoch=100, batch_size=32, verbose=1)
+#----------------------------------------------- estimator.fit(X_train, y_train)
+#---------------------------------------- y_test_est = estimator.predict(X_test)
+#------------------------------------------------------ print("\n===========\n")
 
+print("Keras regressor MSE; %f" % mean_squared_error(y_test, y_test_est))
+print("Keras regressor score: %f" % r2_score(y_test, y_test_est))
 
-estimators = []
-estimators.append(('standardize', StandardScaler()))
-estimators.append(('mlp', Ridge(alpha=1, fit_intercept=True)))
-pipeline = Pipeline(estimators)
-
-
-pipeline.fit(X_train, y_train)
-y_test_est = pipeline.predict(X_test)
-print("ridge score: %f" % pipeline.score(X_test, y_test))
-print("ridge MSE; %f" % mean_squared_error(y_test, y_test_est))
-
-
-
-#----------------------- linear_estimator = LinearRegression(fit_intercept=True)
-#---------------------------------------- linear_estimator.fit(X_train, y_train)
-#--------------------------------- y_test_est = linear_estimator.predict(X_test)
-#- print("linear regression score: %f" % linear_estimator.score(X_test, y_test))
-#--- print("linear regression MSE; %f" % mean_squared_error(y_test, y_test_est))
-
-#-------------------------- ridge_estimator = Ridge(alpha=1, fit_intercept=True)
-#----------------------------------------- ridge_estimator.fit(X_train, y_train)
-#---------------------------------- y_test_est = ridge_estimator.predict(X_test)
-#--- print("ridge regression score: %f" % ridge_estimator.score(X_test, y_test))
-#---- print("ridge regression MSE; %f" % mean_squared_error(y_test, y_test_est))
-
-#------------------------ lasso_estimator = Lasso(alpha=0.1, fit_intercept=True)
-#----------------------------------------- lasso_estimator.fit(X_train, y_train)
-#---------------------------------- y_test_est = lasso_estimator.predict(X_test)
-#--- print("lasso regression score: %f" % lasso_estimator.score(X_test, y_test))
-#---- print("lasso regression MSE; %f" % mean_squared_error(y_test, y_test_est))
-#------------------------------------------------------------------------------ 
-#------------------ linear_predict_carmelo = linear_estimator.predict(carmelo_X)
- # print("linear regression predict carmelo will score: %f, actual score is: %d" %
-      #------------------------------------ (linear_predict_carmelo, carmelo_y))
+#------------------------ results = cross_val_score(estimator, X_train, y_train)
+#----------- print("Results: %.2f (%.2f) MSE" % (results.mean(), results.std()))
