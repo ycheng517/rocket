@@ -4,7 +4,7 @@ import pprint
 
 seasons = ['2013-14', '2014-15', '2015-16']
 
-client = MongoClient("52.41.52.130", 27017)
+client = MongoClient("52.41.48.61", 27017)
 db = client.nba_stats
 
 games = db.game_summary.find()
@@ -29,13 +29,31 @@ for game in games:
         avg_stats = db.player_avg_stats.find_one({'PLAYER_ID': player['PLAYER_ID'],
                                               'SEASON_ID': player['SEASON_ID']})
         if player['MIN'] > 15:
-            sample = {}
-            sample['GAME_PTS'] = player['PTS']
+            sample = {} 
             sample['PLAYER_ID'] = player['PLAYER_ID']
+            sample['TEAM_ID'] = player['TEAM_ID']
             sample['SEASON_ID'] = player['SEASON_ID']
+            sample['GAME_ID'] = game['GAME_ID']
             sample['PLAYER_NAME'] = player['PLAYER_NAME']
             sample['AGE'] = avg_stats['AGE']
-            sample['GAME_ID'] = game['GAME_ID']
+            sample['GAME_DATE'] = player['GAME_DATE']
+            sample['GAME_MIN'] = player['MIN']
+            sample['GAME_FGM'] = player['FGM']
+            sample['GAME_FGA'] = player['FGA']
+            sample['GAME_FG3M'] = player['FG3M']
+            sample['GAME_FG3A'] = player['FG3A']
+            sample['GAME_FTM'] = player['FTM']
+            sample['GAME_FTA'] = player['FTA']
+            sample['GAME_PTS'] = player['PTS']            
+            sample['GAME_REB'] = player['REB']
+            sample['GAME_DREB'] = player['DREB']
+            sample['GAME_AST'] = player['AST']
+            sample['GAME_STL'] = player['STL']
+            sample['GAME_BLK'] = player['BLK']
+            sample['GAME_TOV'] = player['TOV']
+            sample['GAME_PF'] = player['PF']
+            sample['GAME_WL'] = player['WL']
+            sample['GAME_PLUS_MINUS'] = player['PLUS_MINUS']
             sample['AVG_MIN'] = avg_stats['MIN']
             sample['AVG_FGA'] = avg_stats['FGA']
             sample['AVG_FGM'] = avg_stats['FGM']
@@ -133,18 +151,3 @@ for game in games:
             db.basic_model.insert(sample)
             count += 1
             print count
-
-    # get scoring averages for all players who played in the game
-    
-    
-    # calculate the top 8 players in minutes played
-    #------------------------------------------- for home_log in home_game_logs:
-        #--------------------------------------------------- del home_log['_id']
-        #----------------------------------- db.basic_model.insert_one(home_log)
-        #-------- db.basic_model.update_one(home_log, {"$set": home_team_stats})
-        #- db.basic_model.update_one(home_log, {"$set": visitor_team_opp_stats})
-    #------------------------------------- for visitor_log in visitor_game_logs:
-        #------------------------------------------------ del visitor_log['_id']
-        #-------------------------------- db.basic_model.insert_one(visitor_log)
-        #-- db.basic_model.update_one(visitor_log, {"$set": visitor_team_stats})
-        #- db.basic_model.update_one(visitor_log, {"$set": home_team_opp_stats})

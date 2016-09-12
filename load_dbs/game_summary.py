@@ -3,10 +3,13 @@ from pymongo import MongoClient
 
 seasons = ['2013-14', '2014-15', '2015-16']
 
+
+
 client = MongoClient()
 db = client.nba_stats
+db.game_summary.drop()
 
-game_ids = db.game_stats.distinct("GAME_ID")
+game_ids = db.game_logs.distinct("GAME_ID")
 print(len(game_ids))
 count = 0
 for game_id in game_ids:
