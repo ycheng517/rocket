@@ -1,13 +1,13 @@
 import pymongo
 import numpy
 from sklearn.metrics import mean_squared_error, r2_score
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import LSTM, Merge
+from keras.models import Sequential, Model
+from keras.layers import LSTM, merge, Input, Dense
 from sklearn.preprocessing import StandardScaler
 import pprint
 import Queue
 from threading import Thread
+from datetime import datetime
 
 client = pymongo.MongoClient("52.41.48.61", 27017)
 db = client.nba_stats
@@ -35,9 +35,6 @@ for season in all_seasons:
     for player in all_players:
         unique_entries.append({"PLAYER_ID": player,
                                "SEASON_ID": season})
-        
-        results = db.basic_model.find({"PLAYER_ID": player,
-                                       "SEASON_ID": season}).sort("GAME_DATE", pymongo.ASCENDING)
 
 num_worker_threads = 8
 
@@ -53,10 +50,18 @@ def worker():
         sequence_log_data = []
         sequence_log_data_aux = []
         prev_game_number = 0
+        prev_game_date = "2000-01-01"
         for result in results:
             if result['GAME_NUMBER'] - prev_game_number == 1: 
                 game_count += 1
-                sequence_log.append(result)
+
+                days_rest = (datetime.strptime(result['GAME_DATE'], "%Y-%m-%d") - \
+                             datetime.strptime(prev_game_date, "%Y-%m-%d")).days
+                if days_rest > 7:
+                    days_rest = 7
+                all_result_fields = result
+                all_result_fields['GAME_DAYS_REST'] = days_rest
+                sequence_log.append(all_result_fields)
                 sequence_log_data.append([
                     result['GAME_PTS'],
                     result['GAME_FG3M'],
@@ -65,6 +70,8 @@ def worker():
                     result['GAME_FGA'],
                     result['GAME_FTM'],
                     result['GAME_FTA'],
+                    # days rest
+                    days_rest
                     ])
                 sequence_log_data_aux.append([
                     result['AVG_PTS'],
@@ -123,6 +130,7 @@ def worker():
                 sequence_log_data = []
                 sequence_log_data_aux = []
             prev_game_number = result['GAME_NUMBER']
+            prev_game_date = result['GAME_DATE']
         if len(sequence_log_data) > 10:
             verification[season][player] = sequence_log
             data.append({'sequence_log_data': sequence_log_data,
@@ -141,16 +149,26 @@ for item in unique_entries:
 
 q.join()       # block until all tasks are done
 
+
+print "~~~~~~~~~verification~~~~~~~~~"
+verification_count = 0
 for season, players in verification.iteritems():
     for player, games in players.iteritems():
         for entry in games:
-            print("player: %s, date: %s" % (entry['PLAYER_NAME'], entry['GAME_DATE']))
+            print("player: %s, date: %s, days rest: %d" % (entry['PLAYER_NAME'], entry['GAME_DATE'], entry['GAME_DAYS_REST']))
+            verification_count += 1
+            if verification_count > 20:
+                break
+        if verification_count > 20:
+            break
+    if verification_count > 20:
+        break
 
 dataX = []
 dataY = []
 dataX_aux = []
 # reformat data for look back
-look_back = 5
+look_back = 7
 for player_season in data:
     for i in range(len(player_season['sequence_log_data'])-look_back-1):
         x = player_season['sequence_log_data'][i:(i+look_back)]
@@ -193,24 +211,23 @@ X_aux_train = X_aux_train[idx]
 y_train = y_train[idx]
 
 # training neural net
-model_lstm = Sequential()
-model_lstm.add(LSTM(4, input_shape=(5, 7), activation='linear'))
-model_lstm.add(Dense(1, activation='linear'))
+lstm_input = Input(shape=(7,8), name='lstm_input')
+lstm_out = LSTM(4, activation='linear')(lstm_input)
 
-aux_features = X_aux.shape[1]
-model_aux = Sequential()
-model_aux.add(Dense(aux_features, input_dim=aux_features, activation='linear'))
+auxiliary_input = Input(shape=(46,), name='aux_input')
+x = merge([lstm_out, auxiliary_input], mode='concat')
 
-merged = Merge([model_lstm, model_aux], mode='concat')
+# we stack a deep fully-connected network on top
+x = Dense(32, activation='linear')(x)
+main_output = Dense(1, activation='linear', name='main_output')(x)
 
-final_model = Sequential()
-final_model.add(merged)
-final_model.add(Dense(26, activation='linear'))
-final_model.add(Dense(13, activation='linear'))
-final_model.add(Dense(1, activation='linear'))
+final_model = Model(input=[lstm_input, auxiliary_input], output=[main_output])
+
 final_model.compile(loss='mean_squared_error', optimizer='adam')
 
-final_model.fit([X_train, X_aux_train], y_train, nb_epoch=50, batch_size=64, verbose=2)
+print X_train
+print y_train
+final_model.fit([X_train, X_aux_train], y_train, nb_epoch=50, batch_size=128, verbose=2)
 score = final_model.evaluate([X_test, X_aux_test], y_test, verbose=1)
 print "\n"
 print score
