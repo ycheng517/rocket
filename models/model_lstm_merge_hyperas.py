@@ -71,7 +71,10 @@ def worker():
                     result['GAME_FTM'],
                     result['GAME_FTA'],
                     # days rest
-                    days_rest
+                    days_rest,
+                    result['TEAM_GAME_PTS'],
+                    result['TEAM_GAME_REB'],
+                    result['TEAM_GAME_AST'],
                     ])
                 sequence_log_data_aux.append([
                     result['AVG_PTS'],
@@ -211,7 +214,7 @@ X_aux_train = X_aux_train[idx]
 y_train = y_train[idx]
 
 # training neural net
-lstm_input = Input(shape=(7,8), name='lstm_input')
+lstm_input = Input(shape=(7,11), name='lstm_input')
 lstm_out = LSTM(4, activation='linear')(lstm_input)
 
 auxiliary_input = Input(shape=(46,), name='aux_input')
@@ -225,8 +228,6 @@ final_model = Model(input=[lstm_input, auxiliary_input], output=[main_output])
 
 final_model.compile(loss='mean_squared_error', optimizer='adam')
 
-print X_train
-print y_train
 final_model.fit([X_train, X_aux_train], y_train, nb_epoch=50, batch_size=128, verbose=2)
 score = final_model.evaluate([X_test, X_aux_test], y_test, verbose=1)
 print "\n"
