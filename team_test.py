@@ -12,8 +12,12 @@ from nba_py.constants import *
 #----------------------------- ap = team.TeamSeasons(team_id=TEAMS['ATL']['id'])
 #-------------------------------------------------------------- print(ap.info())
 
-ap = game.Boxscore(game_id="0021401184")
-print(ap.game_summary())
+ap = game.BoxscoreSummary(game_id="0021401184")
+score = (ap.game_summary())
+print score
+
+score = (ap.game_info())
+print score
 
 #----------------------------- ap = team.TeamSummary(team_id=TEAMS['ATL']['id'])
 #-------------------------------------------------------------- print(ap.info())
@@ -31,4 +35,11 @@ print(ap.game_summary())
 #------------------------ ap = team.TeamCommonRoster(team_id=TEAMS['CLE']['id'])
 #------------------------------------------------------------ print(ap.roster())
 
-#map reduce example: 
+#---------------------------------------------------------- ap = team.TeamList()
+#----------------------------------------------------------- results = ap.info()
+#----------------------------------------------------------------- print results
+#------------------------------------------------------------------------------ 
+#------- general_splits = team.TeamGeneralSplits('1610612760', season='2008-09')
+#--------------------------------- print ("getting stats for %s" % '1610612760')
+#----------------------------------------------- logs = general_splits.overall()
+#-------------------------------------------------------------------- print logs

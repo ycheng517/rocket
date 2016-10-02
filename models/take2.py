@@ -39,23 +39,6 @@ for sample in all_results:
                     sample['AVG_PF'],
                     sample['AVG_PFD'],
                     sample['AVG_TOV'],
-                    sample['TEAM_W_PCT'],
-                    sample['TEAM_PLUS_MINUS'],
-                    sample['TEAM_FGA'],
-                    sample['TEAM_FGM'],
-                    sample['TEAM_FG3A'],
-                    sample['TEAM_FG3M'],
-                    sample['TEAM_FTA'],
-                    sample['TEAM_FTM'],
-                    sample['TEAM_REB'],
-                    sample['TEAM_DREB'],
-                    sample['TEAM_AST'],
-                    sample['TEAM_STL'],
-                    sample['TEAM_BLK'],
-                    sample['TEAM_BLKA'],
-                    sample['TEAM_TOV'],
-                    sample['TEAM_PF'],
-                    sample['TEAM_PFD'],
                     sample['OPP_W_PCT'],
                     sample['OPP_PLUS_MINUS'],
                      sample['OPP_FGA'],
@@ -74,7 +57,7 @@ for sample in all_results:
                      sample['OPP_PF'],
                      sample['OPP_PFD']
                      ])
-    all_data_y.append(sample['GAME_PTS'])
+    all_data_y.append(sample['GAME_PTS'] / sample['GAME_MIN'])
 
 print("total size of dataset is %d" % count)
 
@@ -83,7 +66,7 @@ print("total size of dataset is %d" % count)
 all_data_x = np.array(all_data_x)
 all_data_y = np.array(all_data_y)
 
-n_train = 7000
+n_train = 36000
 X_train = all_data_x[:n_train]
 y_train = all_data_y[:n_train]
 X_test = all_data_x[n_train:]
@@ -99,7 +82,7 @@ from sklearn.pipeline import Pipeline
 
 estimators = []
 estimators.append(('standardize', StandardScaler()))
-estimators.append(('mlp', RandomForestRegressor(n_estimators=500, n_jobs=-1, 
+estimators.append(('mlp', RandomForestRegressor(n_estimators=200, n_jobs=-1, 
                                      min_samples_split=50, min_samples_leaf=10)))
 pipeline = Pipeline(estimators)
 
@@ -121,9 +104,9 @@ print("ridge MSE; %f" % mean_squared_error(y_test, y_test_est))
 
 
 # regression models
-avg_pts = X_test[:,8]
+avg_pts = X_test[:,8] / X_test[:,1]
 print("baseline score: %f" % r2_score(avg_pts, y_test))
-print("baseline score: %f" % mean_squared_error(avg_pts, y_test))
+print("baseline MSE: %f" % mean_squared_error(avg_pts, y_test))
 
 std = X_train.std(axis=0)
 mean = X_train.mean(axis=0)
@@ -141,16 +124,16 @@ linear_estimator = LinearRegression(fit_intercept=True)
 linear_estimator.fit(X_train, y_train)
 y_test_est = linear_estimator.predict(X_test)
 print("linear regression score: %f" % linear_estimator.score(X_test, y_test))
-print("linear regression MSE; %f" % mean_squared_error(y_test, y_test_est))
+print("linear regression MSE: %f" % mean_squared_error(y_test, y_test_est))
 
 ridge_estimator = Ridge(alpha=1, fit_intercept=True)
 ridge_estimator.fit(X_train, y_train)
 y_test_est = ridge_estimator.predict(X_test)
 print("ridge regression score: %f" % ridge_estimator.score(X_test, y_test))
-print("ridge regression MSE; %f" % mean_squared_error(y_test, y_test_est))
+print("ridge regression MSE: %f" % mean_squared_error(y_test, y_test_est))
 
 lasso_estimator = Lasso(alpha=0.1, fit_intercept=True)
 lasso_estimator.fit(X_train, y_train)
 y_test_est = lasso_estimator.predict(X_test)
 print("lasso regression score: %f" % lasso_estimator.score(X_test, y_test))
-print("lasso regression MSE; %f" % mean_squared_error(y_test, y_test_est))
+print("lasso regression MSE: %f" % mean_squared_error(y_test, y_test_est))
