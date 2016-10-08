@@ -2,7 +2,7 @@ from nba_py.constants import TEAMS
 import pymongo
 import pprint
 
-seasons = ['2013-14', '2014-15', '2015-16']
+seasons = ['2007-08', '2008-09', '2009-10', '2010-11', '2011-12', '2012-13', '2013-14', '2014-15', '2015-16']
 
 client = pymongo.MongoClient("52.41.48.61", 27017)
 db = client.nba_stats
