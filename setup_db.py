@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 import sys
-from retrieve_data_from_web import player_game_logs, team_game_logs, player_shooting_splits
+from retrieve_data_from_web import player_game_logs, team_game_logs, player_shooting_splits,\
+    game_summary
 
 assert str(sys.argv[1]) is not None
 client = MongoClient(str(sys.argv[1]))
@@ -14,4 +15,6 @@ seasons = ['2007-08', '2008-09', '2009-10', '2010-11', '2011-12', '2012-13', '20
 
 # team_game_logs.TeamGameLogs(db, seasons)
 
-player_shooting_splits.PlayerShootingSplits(db, seasons)
+# player_shooting_splits.PlayerShootingSplits(db, seasons)
+
+game_summary.AllGamesSummaries(db)
