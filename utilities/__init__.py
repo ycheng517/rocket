@@ -9,3 +9,6 @@ def create_team_id_dict():
 
 def season_to_season_id(season):
     return "2" + season[0:4]
+
+def season_to_season_short(season):
+    return season[:4]
