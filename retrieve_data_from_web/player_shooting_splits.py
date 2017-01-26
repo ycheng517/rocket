@@ -19,7 +19,7 @@ class PlayerShootingSplits(object):
                         print("shooting splits of {} {} already exists, skipping".format(season, row.DISPLAY_FIRST_LAST))
                         continue
                     print("retrieving player shooting splits for {} {}".format(season, row.DISPLAY_FIRST_LAST))
-                    shooting_splits = nba_py_player.PlayerShootingSplits(player_id=row.PERSON_ID, season=season).shot_5ft() 
+                    shooting_splits = nba_py_player.PlayerShootingSplits(player_id=row.PERSON_ID, season=season).shot_5ft()
                     if isinstance(shooting_splits, pandas.DataFrame):
                         shooting_splits = shooting_splits.to_dict("records")
                     if shooting_splits:

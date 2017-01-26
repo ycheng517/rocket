@@ -2,7 +2,7 @@ from pymongo import MongoClient
 import sys
 from retrieve_data_from_web import player_game_logs, team_game_logs, player_shooting_splits,\
     game_summary
-from process_data import game_number
+from process_data import game_number, team_opponent_stats_logs, build_game_context
 
 assert str(sys.argv[1]) is not None
 client = MongoClient(str(sys.argv[1]))
@@ -28,4 +28,7 @@ seasons = ['2007-08', '2008-09', '2009-10', '2010-11', '2011-12', '2012-13', '20
 # Build Model
 #############
 
-game_number.GameNumber(db, seasons)
+# TODO: need to apply game number to TeamOpponentStats and probably other documents as well
+# game_number.GameNumber(db, seasons)
+build_game_context.GameContext(db, seasons)
+# team_opponent_stats_logs.TeamOpponentStats(db)
